@@ -1,0 +1,93 @@
+version: "3.9"
+
+# =============================================================================
+# DocAI — Docker Compose
+# Used inside GitHub Codespaces for local-like service orchestration.
+# Provides: Postgres + pgvector, Redis (optional)
+# =============================================================================
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose down           # Stop all services
+#   docker compose logs -f db     # Tail Postgres logs
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Postgres 16 with pgvector extension
+  # Port 5433 to avoid conflict with any system Postgres on 5432
+  # ---------------------------------------------------------------------------
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: docai_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: docai
+      POSTGRES_PASSWORD: docai_dev_password
+      POSTGRES_DB: docai
+    ports:
+      - "5433:5432"
+    volumes:
+      - docai_db_data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docai -d docai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - docai_net
+
+  # ---------------------------------------------------------------------------
+  # Redis 7 — Optional caching / rate-limiting
+  # Comment out this service if you don't need it
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: docai_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - docai_redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - docai_net
+
+  # ---------------------------------------------------------------------------
+  # pgAdmin — Web UI for Postgres (dev convenience)
+  # http://localhost:5050  |  admin@docai.dev / admin
+  # Remove this in production
+  # ---------------------------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: docai_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@docai.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - docai_net
+    profiles:
+      - tools   # Only starts with: docker compose --profile tools up
+
+volumes:
+  docai_db_data:
+    driver: local
+  docai_redis_data:
+    driver: local
+
+networks:
+  docai_net:
+    driver: bridge

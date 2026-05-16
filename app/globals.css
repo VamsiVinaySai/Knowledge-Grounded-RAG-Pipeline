@@ -1,0 +1,308 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   DocAI Design System — Global Styles
+   Aesthetic: Refined Dark Editorial
+   ============================================================================= */
+
+/* Font variables */
+:root {
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", "Menlo", monospace;
+
+  /* Design tokens */
+  --canvas: #0b0d10;
+  --canvas-50: #12151a;
+  --canvas-100: #1a1e26;
+  --canvas-200: #242933;
+  --canvas-300: #2e3441;
+
+  --ink: #e8e3da;
+  --ink-muted: #9a9690;
+  --ink-faint: #4a4845;
+
+  --amber: #d4a853;
+  --amber-light: #e8c07a;
+  --amber-dark: #a8823e;
+  --amber-glow: rgba(212, 168, 83, 0.15);
+
+  --border: rgba(232, 227, 218, 0.07);
+  --border-hover: rgba(232, 227, 218, 0.14);
+
+  --sidebar-width: 260px;
+  --topbar-height: 56px;
+}
+
+/* Base reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--amber-glow);
+  color: var(--amber-light);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 227, 218, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 227, 218, 0.18);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* =============================================================================
+   Layout utilities
+   ============================================================================= */
+
+.app-shell {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--canvas);
+  background-image:
+    linear-gradient(rgba(232, 227, 218, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 227, 218, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas-50);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  transition: width 0.2s ease;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* =============================================================================
+   Component utilities
+   ============================================================================= */
+
+.glass-panel {
+  background: rgba(26, 30, 38, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.amber-glow-text {
+  color: var(--amber);
+  text-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* =============================================================================
+   Markdown / prose rendering (for chat messages)
+   ============================================================================= */
+
+.prose-chat {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.prose-chat h1,
+.prose-chat h2,
+.prose-chat h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.prose-chat h1 {
+  font-size: 1.4em;
+}
+.prose-chat h2 {
+  font-size: 1.2em;
+}
+.prose-chat h3 {
+  font-size: 1.05em;
+}
+
+.prose-chat p {
+  margin: 0.6em 0;
+}
+
+.prose-chat code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--canvas-200);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--amber-light);
+}
+
+.prose-chat pre {
+  background: var(--canvas-200);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 0.8em 0;
+}
+
+.prose-chat pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--ink);
+}
+
+.prose-chat blockquote {
+  border-left: 3px solid var(--amber);
+  padding-left: 12px;
+  margin-left: 0;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.prose-chat ul,
+.prose-chat ol {
+  padding-left: 20px;
+  margin: 0.6em 0;
+}
+
+.prose-chat li {
+  margin: 0.25em 0;
+}
+
+.prose-chat strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.prose-chat a {
+  color: var(--amber);
+  text-decoration: underline;
+  text-decoration-color: rgba(212, 168, 83, 0.4);
+}
+
+.prose-chat a:hover {
+  text-decoration-color: var(--amber);
+}
+
+.prose-chat hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1em 0;
+}
+
+/* =============================================================================
+   Animation helpers
+   ============================================================================= */
+
+.animate-in {
+  animation: fadeSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+.stagger-2 {
+  animation-delay: 0.1s;
+}
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+.stagger-4 {
+  animation-delay: 0.2s;
+}
